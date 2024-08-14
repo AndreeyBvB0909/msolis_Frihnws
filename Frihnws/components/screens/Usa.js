@@ -1,23 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import axios from 'axios';
+import { TranslateText } from '../../translations/TranslateText'; // Asegúrate de que el nombre coincida
 
 const Usa = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Consultar la API
-    axios.get('https://www.foxnews.com/api/article-search?searchBy=categories&values=fox-news%2Fus&size=5&from=5')
-      .then(response => {
-        const articles = response.data; // Ajusta según la estructura
-        setData(articles);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://www.foxnews.com/api/article-search?searchBy=categories&values=fox-news%2Fus&size=5&from=5');
+        const articles = response.data;
+
+        // Traducir title y description de cada artículo
+        const translatedArticles = await Promise.all(articles.map(async (article) => {
+          const translatedTitle = await TranslateText(article.title);
+          const translatedDescription = await TranslateText(article.description);
+
+          return {
+            ...article,
+            title: translatedTitle,
+            description: translatedDescription,
+          };
+        }));
+
+        setData(translatedArticles);
         setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching data:', error);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (loading) {
@@ -73,5 +89,9 @@ const styles = StyleSheet.create({
 });
 
 export default Usa;
+
+
+
+
 
 
