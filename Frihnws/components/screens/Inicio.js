@@ -11,7 +11,7 @@ const Inicio = ({ navigation }) => { // Accede a la función de navegación a tr
       />
       <Button 
         title="Continuar" 
-        onPress={() => navigation.navigate('Home')} // Navega a la pantalla "Home"
+        onPress={() => navigation.navigate('Drawer')} // Navega a la pantalla "Home"
         color="#F0DB00" 
         backgroundColor="#000"
       />
